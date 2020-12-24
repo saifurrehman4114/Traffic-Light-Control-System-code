@@ -1,5 +1,4 @@
 /**************************************************
-Solution for the three way traffic light
 
 Assuming that the Lights_Update will be called
 every 10ms.
