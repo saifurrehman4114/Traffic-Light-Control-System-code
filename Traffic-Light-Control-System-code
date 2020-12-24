@@ -1,0 +1,257 @@
+/**************************************************
+Solution for the three way traffic light
+
+Assuming that the Lights_Update will be called
+every 10ms.
+
+**************************************************/
+
+//assuming we have low level functions  to control the lights
+//Side_1_Yellow_Off
+//Side_1_Yellow_On
+//etc.
+
+
+//system will have 10 state (flashing yellow + 3 for each side)
+//very important that all states have a different (unique) number
+#define STATE_ALL_YELLOW_FLASH		0
+#define STATE_1Y					1
+#define STATE_1G					2
+#define STATE_1YA					3
+#define STATE_2Y					4
+#define STATE_2G					5
+#define STATE_2YA					6
+#define STATE_3Y					7
+#define STATE_3G					8
+#define STATE_3YA					9
+
+
+//Constants for controlling time
+#define LIGHTS_UPDATE_PERIOD_MS		10
+#define COUNT_1_SEC					(1000/LIGHTS_UPDATE_PERIOD_MS)
+
+//time in states
+#define TIME_FLASHING_YELLOW		(10*COUNT_1_SEC)
+#define TIME_YELLOW					(2*COUNT_1_SEC)
+#define TIME_GREEN_1				(45*COUNT_1_SEC)
+#define TIME_GREEN_2				(30*COUNT_1_SEC)
+#define TIME_GREEN_3				(25*COUNT_1_SEC)
+
+void Lights_Init(void)
+{
+	//enable clocks for all the ports that will be used to connect/
+	//control the lights
+	....
+	
+	//configure the pins for all lights as general purpose outputs
+	....
+	
+	Side_1_Yellow_Off();
+	Side_1_Green_Off();
+	Side_1_Red_Off();
+	Side_2_Yellow_Off();
+	Side_2_Green_Off();
+	Side_2_Red_Off();
+	Side_3_Yellow_Off();
+	Side_3_Green_Off();
+	Side_3_Red_Off();
+}
+
+void Lights_Update()
+{
+	static unsigned char Lights_state = STATE_ALL_YELLOW_FLASH;
+	static unsigned int Count = 0;		// used to track time in a state
+	
+	static unsigned short Count_2 = 0;	// used to flash the yellow lights at 2Hz Frequency
+	
+	switch(Lights_state)
+	{
+		case STATE_1Y:
+			Side_1_Yellow_On();
+			Side_1_Green_Off();
+			Side_1_Red_Off();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_1G;
+				Count = 0;
+			}
+			break;
+		case STATE_1G:
+			Side_1_Yellow_Off();
+			Side_1_Green_On();
+			Side_1_Red_Off();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_GREEN_1)
+			{
+				Lights_state = STATE_1YA;
+				Count = 0;
+			}
+			break;
+		case STATE_1YA:
+			Side_1_Yellow_On();
+			Side_1_Green_Off();
+			Side_1_Red_Off();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_2Y;
+				Count = 0;
+			}
+			break;
+		case STATE_2Y:
+			Side_2_Yellow_On();
+			Side_2_Green_Off();
+			Side_2_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_2G;
+				Count = 0;
+			}
+			break;
+		case STATE_2G:
+			Side_2_Yellow_Off();
+			Side_2_Green_On();
+			Side_2_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_GREEN_2)
+			{
+				Lights_state = STATE_2YA;
+				Count = 0;
+			}
+			break;
+		case STATE_2YA:
+			Side_2_Yellow_On();
+			Side_2_Green_Off();
+			Side_2_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_3_Yellow_Off();
+			Side_3_Green_Off();
+			Side_3_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_3Y;
+				Count = 0;
+			}
+			break;
+		case STATE_3Y:
+			Side_3_Yellow_On();
+			Side_3_Green_Off();
+			Side_3_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_3G;
+				Count = 0;
+			}
+			break;
+		case STATE_3G:
+			Side_3_Yellow_Off();
+			Side_3_Green_On();
+			Side_3_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			
+			if(++Count >= TIME_GREEN_3)
+			{
+				Lights_state = STATE_3YA;
+				Count = 0;
+			}
+			break;
+		case STATE_3YA:
+			Side_3_Yellow_On();
+			Side_3_Green_Off();
+			Side_3_Red_Off();
+			Side_1_Yellow_Off();
+			Side_1_Green_Off();
+			Side_1_Red_On();
+			Side_2_Yellow_Off();
+			Side_2_Green_Off();
+			Side_2_Red_On();
+			
+			if(++Count >= TIME_YELLOW)
+			{
+				Lights_state = STATE_1Y;
+				Count = 0;
+			}
+			break;
+		case STATE_ALL_YELLOW_FLASH:
+			if(++Count_2 < COUNT_1_SEC)
+			{
+				Side_1_Yellow_On();
+				Side_2_Yellow_On();
+				Side_3_Yellow_On();
+			}
+			else if(Count_2 < 2*COUNT_1_SEC)
+			{
+				Side_1_Yellow_Off();
+				Side_2_Yellow_Off();
+				Side_3_Yellow_Off();
+			}
+			else
+			{
+				Count_2 = 0;
+			}
+			Side_1_Red_Off();
+			Side_1_Green_Off();
+			Side_2_Red_Off();
+			Side_2_Green_Off();
+			Side_3_Red_Off();
+			Side_3_Green_Off();
+
+			if(++Count >= TIME_FLASHING_YELLOW)
+			{
+				Lights_state = STATE_1Y;
+				Count = 0;
+			}
+			break;			
+		default:
+			Lights_state = STATE_ALL_YELLOW_FLASH;
+			Count = 0;
+			Count_2 = 0;
+	}
+}
